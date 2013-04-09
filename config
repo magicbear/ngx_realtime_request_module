@@ -1,0 +1,24 @@
+if [ "$HTTP_FASTCGI" = "YES" ]; then
+    have=NGX_HTTP_FASTCGI . auto/have
+fi
+
+if [ "$HTTP_SCGI" = "YES" ]; then
+    have=NGX_HTTP_SCGI . auto/have
+fi
+
+if [ "$HTTP_UWSGI" = "YES" ]; then
+    have=NGX_HTTP_UWSGI . auto/have
+fi
+
+ngx_addon_name=ngx_http_realtime_request_module
+# Make module to last execute
+HTTP_MODULES2="$HTTP_MODULES"
+HTTP_MODULES=" $HTTP_MODULES2 ngx_http_realtime_request_module"
+
+NGX_ADDON_SRCS="$NGX_ADDON_SRCS $ngx_addon_dir/ngx_slab_array.c \
+    $ngx_addon_dir/ngx_realtime_request_module.c"
+
+NGX_ADDON_DEPS="$NGX_ADDON_DEPS  \
+    $ngx_addon_dir/ngx_slab_array.h"
+
+have=NGX_REALTIME_REQUEST_MODULE . auto/have
