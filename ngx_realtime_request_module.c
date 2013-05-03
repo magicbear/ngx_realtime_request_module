@@ -11,7 +11,7 @@
 
 #include "ngx_slab_array.h"
 
-#define REALTIME_REQUEST_MODULE_VERSION "0.3"
+#define REALTIME_REQUEST_MODULE_VERSION "0.5"
 
 typedef struct {
 	ngx_slab_array_t	*srv_list;	// array of ngx_http_realtime_request_master_srv_conf_t *
@@ -305,21 +305,11 @@ ngx_http_realtime_request_handler(ngx_http_request_t *r)
 		state = r->upstream_states->elts;
 		size_t upstream_response_length = 0;
 
-		i=0;
-		for ( ;; ) {
-			upstream_response_length+=state[i].response_length;
-
-			if (++i == r->upstream_states->nelts) {
-				break;
-			}
-
+		for (i = 0; i < r->upstream_states->nelts; i++) {			
 			if (!state[i].peer) {
-				if (++i == r->upstream_states->nelts) {
-					break;
-				}
-
 				continue;
 			}
+			upstream_response_length+=state[i].response_length;
 		}
 
 		if (upstream_response_length > 0)
